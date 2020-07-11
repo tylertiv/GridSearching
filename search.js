@@ -31,7 +31,7 @@ function setUp( ) {
     // draw individual boxes on canvas
     for(let x = 1; x <= (CANVAS_SIZE / BOX); x++) {
        for(let y = 1; y <= (CANVAS_SIZE / BOX); y++){
-            grid[x][y] = 0;
+            grid[x][y] = (Math.random() < 0.3) ? 1 : 0;
         }
     }
 

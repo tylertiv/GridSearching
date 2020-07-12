@@ -35,16 +35,16 @@ function setUp( ) {
     // draw individual boxes on canvas
     for(let x = 1; x <= (CANVAS_SIZE / BOX); x++) {
        for(let y = 1; y <= (CANVAS_SIZE / BOX); y++){
-            grid[x][y] = (Math.random() < 0.25) ? 1 : 0;
+            grid[x][y] = (Math.random() < 0.30) ? 1 : 0;
         }
     }
 
     // set up start and end points (will be randomized later)
     if(DEBUG) console.table(grid);
-    start = {x: 5, y: 10};
+    start = {x: 2, y: 2};
     grid[start.x][start.y] = 2;
 
-    goal = {x: 25, y: 20};
+    goal = {x: 25, y: 25};
     grid[goal.x][goal.y] = 3;
 
     for(let i = 0; i < GRID_SIZE; i++) {
@@ -55,7 +55,7 @@ function setUp( ) {
             ctx.strokeRect(i*BOX, j*BOX, BOX, BOX);
         }
     }
-    
+    refresh = setInterval(dfs, 100);
 }
 
 
@@ -73,7 +73,7 @@ function dfs() {
     /* Algorithm: 
             - Look right, else down, else left, else up
             - When look at each box, if open update current there and push to stack
-            - Else, if no open boxes, pop off stack into current, and check
+            - Else, if no open boxes, backtrack by popping off stack into current, and continue checking
     */
     
     // label current spot
@@ -85,7 +85,6 @@ function dfs() {
         next = {x: current.x + directions[i].x, y: current.y + directions[i].y};
         if(next.x === goal.x && next.y === goal.y) {
             clearInterval(refresh);
-            console.log("donee!");
         }
         if(grid[next.x][next.y] === 0) {
             isOption = true;
@@ -96,7 +95,7 @@ function dfs() {
     
     if(next.x === goal.x && next.y === goal.y) {
         clearInterval(refresh);
-        console.log("donee!");
+        found = true;
     }
     else {
         if(isOption) {  // found a viable option, pursue it in depth first manner
@@ -104,10 +103,9 @@ function dfs() {
             current = next;
             isOption = false;
         }
-        else {
+        else {          // backtrack using stack
             if(stack.length == 0) {
                 clearInterval(refresh);
-                console.log("done");
             }
             else {
                 grid[current.x][current.y] = 5;
@@ -128,9 +126,4 @@ function dfs() {
         }
     }
 }
-refresh = setInterval(dfs, 50);
 
-function draw(){
-
-    
-}

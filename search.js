@@ -35,7 +35,7 @@ function setUp( ) {
     // draw individual boxes on canvas
     for(let x = 1; x <= (CANVAS_SIZE / BOX); x++) {
        for(let y = 1; y <= (CANVAS_SIZE / BOX); y++){
-            grid[x][y] = (Math.random() < 0.30) ? 1 : 0;
+            grid[x][y] = (Math.random() < 0.25) ? 1 : 0;
         }
     }
 
@@ -55,7 +55,7 @@ function setUp( ) {
             ctx.strokeRect(i*BOX, j*BOX, BOX, BOX);
         }
     }
-    refresh = setInterval(dfs, 100);
+    refresh = setInterval(dfs, 25 );
 }
 
 
@@ -127,3 +127,48 @@ function dfs() {
     }
 }
 
+let queue = [];
+function bfs () {
+    let found = false;
+    let isOption = false;
+
+    /* Algorithm: 
+            - Look right, else down, else left, else up
+            - When look at each box, if open enqueue those coordinates (push to array)
+            - Else, if no open boxes, backtrack by popping off stack into current, and continue checking
+    */
+    
+    // label current spot
+    grid[current.x][current.y] = 4;
+
+    let next;
+    // looks for first available option
+    for(let i= 0; !isOption && i < directions.length; i++) {
+        next = {x: current.x + directions[i].x, y: current.y + directions[i].y};
+        if(next.x === goal.x && next.y === goal.y) {
+            clearInterval(refresh);
+            found = true;
+        }
+        if(grid[next.x][next.y] == 0){
+            queue.push(next);
+        }
+    }
+    
+    //if(!found) {
+        if(queue.length === 0) {
+            clearInterval(refresh);
+        }
+        current = queue.shift();
+   // }
+
+    // draws the grid 
+    grid[start.x][start.y] = 2;
+    for(let i = 0; i < GRID_SIZE; i++) {
+        for(let j = 0; j < GRID_SIZE; j++){
+            ctx.fillStyle = colorMap[grid[i][j]];
+            ctx.fillRect(i*BOX, j*BOX, BOX, BOX);
+            ctx.strokeStyle = "black";
+            ctx.strokeRect(i*BOX, j*BOX, BOX, BOX);
+        }
+    }
+}
